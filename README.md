@@ -2,7 +2,7 @@
 
 ## Presentation
 
-Shell script that return pull limit an pull reaming
+Shell script that return pull limit an pull reamaining
 
 ## Utilisation
 
