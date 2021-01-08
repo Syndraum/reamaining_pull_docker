@@ -8,8 +8,13 @@ function	print_message {
 	echo -e "${violet}$1${reset}"
 }
 
+#			anonyme_token()
 function	anonyme_token {
 	TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
+}
+#			user_token(username, password)
+function	user_token {
+	TOKEN=$(curl -s --user "$1:$2" "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
 }
 
 dpkg -s jq >/dev/null 2>/dev/null
@@ -28,6 +33,17 @@ fi
 
 if [ "$1" == "-a" ];then
 	anonyme_token
+elif [ "$1" == "-u" ];then
+	if [ -z "$2" ];then
+		echo -n "Enter your username : "
+		read username
+	else
+		username=$2
+	fi
+	echo -n "Enter your password : "
+	read -s password
+	echo ""
+	user_token $username $password
 else
 	echo -n "Are you anonymous ? (Y/N) : "
 	read rep
@@ -39,7 +55,7 @@ else
 		echo -n "Enter your password : "
 		read -s password
 		echo ""
-		TOKEN=$(curl -s --user "$username:$password" "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
+		user_token $username $password
 	fi
 fi
 rm -f request.txt

@@ -15,3 +15,5 @@ If your are a account enter your username and your login
 Option :
 
 `-a` : run as anonymous (skip question)
+
+`-u [username]` : run as user (skip question), you can specify username in command line
