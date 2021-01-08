@@ -38,11 +38,13 @@ else
 		read username
 		echo -n "Enter your password : "
 		read -s password
+		echo ""
 		TOKEN=$(curl -s --user "$username:$password" "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
 	fi
 fi
 rm -f request.txt
 curl -s --head -H "Authorization: Bearer $TOKEN" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest > request.txt
+$(cat request.txt | grep RateLimit-Limit >/dev/null 2>/dev/null)
 if [ "$?" == "1" ];then
 	echo "Error worng token"
 	exit 1
