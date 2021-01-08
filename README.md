@@ -12,7 +12,7 @@ If you are anonymous (no Docker account linked), respond Y at first question
 
 If your are a account enter your username and your login
 
-Option :
+### Option :
 
 `-a` : run as anonymous (skip question)
 
