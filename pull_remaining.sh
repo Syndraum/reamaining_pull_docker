@@ -8,8 +8,8 @@ function	print_message {
 	echo -e "${violet}$1${reset}"
 }
 
-#			anonyme_token()
-function	anonyme_token {
+#			anonymous_token()
+function	anonymous_token {
 	TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
 }
 #			user_token(username, password)
@@ -20,19 +20,19 @@ function	user_token {
 dpkg -s jq >/dev/null 2>/dev/null
 if [ "$?" = "1" ];then
 	print_message "jq is not installed"
-	echo -n "Would you want install jq ? (Y/N) : "
+	echo -n "Would you like to install jq ? (Y/N) : "
 	read rep
 	if [ "$rep" = "Y" -o "$rep" = "y" ];then
 		print_message "Enter your password :"
 		sudo apt-get install jq
 	else
-		echo "script stop by user"
+		echo "Script stopped by user"
 		exit 1
 	fi
 fi
 
 if [ "$1" == "-a" ];then
-	anonyme_token
+	anonymous_token
 elif [ "$1" == "-u" ];then
 	if [ -z "$2" ];then
 		echo -n "Enter your username : "
@@ -48,7 +48,7 @@ else
 	echo -n "Are you anonymous ? (Y/N) : "
 	read rep
 	if [ "$rep" = "Y" -o "$rep" = "y" ];then
-		anonyme_token
+		anonymous_token
 	else
 		echo -n "Enter your username : "
 		read username
@@ -62,12 +62,12 @@ rm -f request.txt
 curl -s --head -H "Authorization: Bearer $TOKEN" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest > request.txt
 $(cat request.txt | grep RateLimit-Limit >/dev/null 2>/dev/null)
 if [ "$?" == "1" ];then
-	echo "Error wrong token"
+	echo "Error: wrong token"
 	exit 1
 fi
 limit=$(cat request.txt | grep RateLimit-Limit | cut -f 2 -d' ' | cut -f 1 -d';')
 remaining=$(cat request.txt | grep RateLimit-Remaining | cut -f 2 -d' ' | cut -f 1 -d';')
-echo -e "pull limit\t$limit"
-echo -e "pull remaining\t$remaining"
+printf "%*d pull limit\n" ${#limit} $limit
+printf "%*d pull remaining\n" ${#limit} $remaining
 rm -f request.txt
 exit 0
