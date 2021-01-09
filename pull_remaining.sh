@@ -62,12 +62,12 @@ rm -f request.txt
 curl -s --head -H "Authorization: Bearer $TOKEN" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest > request.txt
 $(cat request.txt | grep RateLimit-Limit >/dev/null 2>/dev/null)
 if [ "$?" == "1" ];then
-	echo "Error worng token"
+	echo "Error wrong token"
 	exit 1
 fi
 limit=$(cat request.txt | grep RateLimit-Limit | cut -f 2 -d' ' | cut -f 1 -d';')
 remaining=$(cat request.txt | grep RateLimit-Remaining | cut -f 2 -d' ' | cut -f 1 -d';')
-echo "$remaining pull limit"
-echo "$remaining pull remaining"
+echo -e "pull limit\t$limit"
+echo -e "pull remaining\t$remaining"
 rm -f request.txt
 exit 0
